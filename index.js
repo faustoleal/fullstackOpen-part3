@@ -52,9 +52,9 @@ app.get("/api/persons/:id", (request, response) => {
 
 app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
-  let allPersons = persons.find((person) => person.id !== id);
-  let person = persons.find((person) => person.id === id);
-  response.json(person);
+  persons = persons.find((person) => person.id !== id);
+  /* let person = persons.find((person) => person.id === id); */
+  response.json(persons);
   response.status(204).end();
 });
 
