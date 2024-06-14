@@ -1,9 +1,11 @@
-// exercises 3.1-3.6
+// exercises 3.1-3.6 / excercise 3.12
 
+require(`dotenv`).config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const app = express();
+const Person = require("./modules/person");
 
 morgan.token("body", (request) => JSON.stringify(request.body));
 
@@ -12,7 +14,7 @@ app.use(express.json());
 app.use(morgan(`tiny`));
 app.use(cors());
 
-let persons = [
+/* let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -33,19 +35,21 @@ let persons = [
     name: "Mary Poppendieck",
     number: "39-23-6423122",
   },
-];
+]; */
 
-app.get("/api/persons/info", (request, response) => {
+/* app.get("/api/persons/info", (request, response) => {
   response.send(
     `<p>Phonebook has info for ${persons.length} people</p><p>${Date()}</p>`
   );
-});
+}); */
 
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((persons) => {
+    response.json(persons);
+  });
 });
 
-app.get("/api/persons/:id", (request, response) => {
+/* app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   const person = persons.find((person) => person.id === id);
   response.json(person);
@@ -56,7 +60,7 @@ app.delete("/api/persons/:id", (request, response) => {
   response.json(persons.find((person) => person.id === id));
   persons = persons.filter((person) => person.id !== id);
   response.status(204).end();
-});
+}); */
 
 app.post(
   "/api/persons",
@@ -71,25 +75,23 @@ app.post(
       });
     }
 
-    if (persons.find((person) => person.name === body.name)) {
+    /* if (persons.find((person) => person.name === body.name)) {
       return response.status(400).json({
         error: "name must be unique",
       });
-    }
+    } */
 
-    const person = {
+    const person = new Person({
       name: body.name,
       number: body.number,
-      id: Math.round(Math.random() * 100000),
-    };
+      //id: Math.round(Math.random() * 100000),
+    });
 
-    persons = persons.concat(person);
-
-    response.json(person);
+    person.save().then((personSave) => response.json(personSave));
   }
 );
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
