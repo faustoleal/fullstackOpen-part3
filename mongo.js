@@ -15,14 +15,14 @@ mongoose.set("strictQuery", false);
 mongoose.connect(url);
 
 const personSchema = new mongoose.Schema({
-  content: String,
+  name: String,
   number: String,
 });
 
 const Person = mongoose.model("Person", personSchema);
 
 const person = new Person({
-  content: `${process.argv[3]}`,
+  name: `${process.argv[3]}`,
   number: `${process.argv[4]}`,
 });
 

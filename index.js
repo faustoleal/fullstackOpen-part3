@@ -37,10 +37,16 @@ app.use(cors());
   },
 ]; */
 
+let persons = [];
+
 /* app.get("/api/persons/info", (request, response) => {
   response.send(
     `<p>Phonebook has info for ${persons.length} people</p><p>${Date()}</p>`
   );
+}); */
+
+/* app.get("/api/persons", (request, response) => {
+  response.json(persons);
 }); */
 
 app.get("/api/persons", (request, response) => {
@@ -53,14 +59,58 @@ app.get("/api/persons", (request, response) => {
   const id = Number(request.params.id);
   const person = persons.find((person) => person.id === id);
   response.json(person);
+}); */
+
+app.get("/api/persons/:id", (request, response) => {
+  Person.findById(request.params.id).then((person) => {
+    response.json(person);
+  });
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+/* app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   response.json(persons.find((person) => person.id === id));
   persons = persons.filter((person) => person.id !== id);
   response.status(204).end();
-}); */
+  }); */
+
+app.delete("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  persons = persons.filter((note) => note.id !== id);
+
+  response.status(204).end();
+});
+
+/* app.post(
+  "/api/persons",
+  morgan(`:method :url :status :res[content-length] - :response-time ms :body`),
+  (request, response) => {
+    const body = request.body;
+    //console.log(body);
+
+    if (!body.name || !body.number) {
+      return response.status(400).json({
+        error: "content missing",
+      });
+    }
+
+    if (persons.find((person) => person.name === body.name)) {
+      return response.status(400).json({
+        error: "name must be unique",
+      });
+    }
+
+    const person = {
+      name: body.name,
+      number: body.number,
+      id: Math.round(Math.random() * 100000),
+    };
+
+    persons = persons.concat(person);
+
+    response.json(person);
+  }
+); */
 
 app.post(
   "/api/persons",
