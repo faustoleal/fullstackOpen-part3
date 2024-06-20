@@ -72,14 +72,18 @@ app.get("/api/persons/:id", (request, response, next) => {
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
-  const body = request.body;
+  const { name, number } = request.body;
 
-  const person = {
-    name: body.name,
-    number: body.number,
-  };
+  /* const person = {
+    name: name,
+    number: number,
+  }; */
 
-  Person.findByIdAndUpdate(request.params.id, person)
+  Person.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: "query" }
+  )
     .then((updatedPerson) => {
       response.json(updatedPerson);
     })
@@ -136,15 +140,15 @@ app.delete("/api/persons/:id", (request, response, next) => {
 app.post(
   "/api/persons",
   morgan(`:method :url :status :res[content-length] - :response-time ms :body`),
-  (request, response) => {
+  (request, response, next) => {
     const body = request.body;
     //console.log(body);
 
-    if (!body.name || !body.number) {
+    /*  if (!body.name || !body.number) {
       return response.status(400).json({
         error: "content missing",
       });
-    }
+    } */
 
     /* if (persons.find((person) => person.name === body.name)) {
       return response.status(400).json({
@@ -158,7 +162,12 @@ app.post(
       //id: Math.round(Math.random() * 100000),
     });
 
-    person.save().then((personSave) => response.json(personSave));
+    person
+      .save()
+      .then((personSave) => {
+        response.json(personSave);
+      })
+      .catch((error) => next(error));
   }
 );
 
@@ -173,6 +182,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
@@ -184,3 +195,5 @@ const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// /[0-9]{2}|[0-9]{3}-[0-9]/.test(number)
