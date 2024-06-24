@@ -37,16 +37,6 @@ app.use(cors());
   },
 ]; */
 
-const requestLogger = (request, response, next) => {
-  console.log("Method:", request.method);
-  console.log("Path:  ", request.path);
-  console.log("Body:  ", request.body);
-  console.log("---");
-  next();
-};
-
-app.use(requestLogger);
-
 app.get("/api/persons/info", (request, response) => {
   response.send(
     `<p>Phonebook has info for ${persons.length} people</p><p>${Date()}</p>`
