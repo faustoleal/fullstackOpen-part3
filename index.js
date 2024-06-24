@@ -1,4 +1,4 @@
-// exercises 3.1-3.6 / excercise 3.12 / excercise 3.13-3.14 / excercise 3.15-3.18
+// exercises 3.1-3.6 / excercise 3.12 / excercise 3.13-3.14 / excercise 3.15-3.18 / excercise 3.19/3.21
 
 require(`dotenv`).config();
 const express = require("express");
@@ -195,5 +195,3 @@ const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-// /[0-9]{2}|[0-9]{3}-[0-9]/.test(number)
